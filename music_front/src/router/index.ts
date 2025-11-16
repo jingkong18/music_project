@@ -72,7 +72,25 @@ const router = createRouter({
         {
           path: '/recent',
           name: 'Recent',
-          component: () => import('@/views/recent/index.vue')
+          component: () => import('@/views/recent/index.vue'),
+          redirect: '/recentSong',
+          children: [
+            {
+              path: '/recentSong',
+              name: 'RecentSong',
+              component: () => import('@/views/recent/RencentSong/index.vue'),
+            },
+            {
+              path: '/recentPlayList',
+              name: 'RecentPlayList',
+              component: () => import('@/views/recent/RecentPlayList/index.vue'),
+            },
+            {
+              path: '/recentAlbum',
+              name: 'RecentAlbum',
+              component: () => import('@/views/recent/RecentAlbum/index.vue'),
+            },
+          ]
         },
         {
           path: '/collect',

@@ -74,7 +74,6 @@ defineProps<{
   font-size: 12px;
   color: #666;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
