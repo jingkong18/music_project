@@ -45,7 +45,7 @@ const router = createRouter({
               path: '/playlist',
               name: 'Playlist',
               component: () => import('@/views/sift/playlist/index.vue'),
-              
+
             },
             {
               path: '/SiftView',
@@ -97,9 +97,29 @@ const router = createRouter({
           name: 'Collect',
           component: () => import('@/views/collect/index.vue')
         },
-
+        {
+          path: '/disk',
+          name: 'Disk',
+          component: () => import('@/views/disk/index.vue')
+        },
+        {
+          path: '/playlist/:id',
+          name: 'PlaylistDetail',
+          component: () => import('@/views/playlistDetail/index.vue')
+        },
+        {
+          path: '/album/:id',
+          name: 'AlbumDetail',
+          component: () => import('@/views/albumdetail/index.vue')
+        },
+        {
+          path: '/song/:id',
+          name: 'SongDetail',
+          component: () => import('@/views/songDetail/index.vue'),
+          props: true,
+        }
       ]
-    }]
+}]
 });
 
 export default router;

@@ -64,3 +64,17 @@ export interface Singer {
   gender: '男歌手' | '女歌手' | '乐队组合'; // 性别/类型
   initial: string; // 姓名首字母（用于字母导航）
 }
+// 歌曲详情类型（匹配设计图字段）
+export interface SongDetail {
+  id: string;
+  title: string;
+  isLocal: boolean; // 是否本地歌曲
+  album: string;
+  artist: string;
+  source: string; // 来源（最近播放）
+  cover: string; // 歌曲封面
+  lyricist: string; // 作词
+  composer: string; // 作曲
+  lyrics: string[]; // 歌词列表
+  duration: string; // 时长（格式："mm:ss"）
+}

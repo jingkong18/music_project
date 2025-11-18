@@ -1,12 +1,12 @@
 <template>
   <div class="player-footer">
-    <!-- 左侧歌曲信息区 -->
-    <div class="left-section">
+    <!-- 左侧歌曲信息区 - 修改为始终显示，使用默认值 -->
+    <div class="left-section"  @click="gotoDetail(displaySong.id)">
       <div class="album-cover">
-        <img src="https://p1.music.126.net/7P01229zDZkGjGm2c13D9A==/109951168388004340.jpg" alt="专辑封面" />
+        <img :src="displaySong.cover" alt="专辑封面" />
       </div>
       <div class="song-info">
-        <div class="song-name">听妈妈的话 - 周杰伦</div>
+        <div class="song-name">{{ displaySong.title }} - {{ displaySong.artist }}</div>
         <div class="actions">
           <el-button type="text" :icon="Plus" class="action-btn" />
           <el-button type="text" :icon="DeleteFilled" class="action-btn" />
@@ -20,15 +20,20 @@
     <div class="control-section">
       <div class="control-buttons">
         <el-button type="text" :icon="Star" class="control-btn" />
-        <el-button type="text" :icon="ArrowLeft" class="control-btn" />
-        <el-button type="text" :icon="CaretRight" class="play-btn" />
-        <el-button type="text" :icon="ArrowRight" class="control-btn" />
+        <el-button type="text" :icon="ArrowLeft" class="control-btn" @click="prevSong" />
+        <el-button 
+          type="text" 
+          :icon="isPlaying ? 'Pause' : 'CaretRight'" 
+          class="play-btn" 
+          @click="togglePlay" 
+        />
+        <el-button type="text" :icon="ArrowRight" class="control-btn" @click="nextSong" />
         <el-button type="text" :icon="Refresh" class="control-btn" />
       </div>
       <div class="progress-bar">
-        <span class="time">01:38</span>
-        <el-slider v-model="progress" class="slider" />
-        <span class="time">04:25</span>
+        <span class="time">00:00</span>
+        <el-slider v-model="progress" class="slider" :disabled="!isPlaying" />
+        <span class="time">{{ displaySong.duration }}</span>
       </div>
     </div>
 
@@ -44,16 +49,70 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { usePlayerStore } from '@/store/song';
 import {
-  Plus, DeleteFilled, RefreshRight, Headset,Star,ArrowLeft,ArrowRight,
-  Refresh, Document,CaretRight, User, Grid
+  Plus, DeleteFilled, RefreshRight, Headset, Star, ArrowLeft, ArrowRight,
+  Refresh, Document,User, Grid
 } from '@element-plus/icons-vue';
+import { useRouter } from 'vue-router';
 
-const progress = ref(30); // 进度条百分比
+// 创建路由实例
+const router = useRouter();
+
+// 跳转详情页
+const gotoDetail = (id: string) => {
+  router.push({ name: 'SongDetail', params: { id } });
+};
+
+
+
+// 创建store实例
+const playerStore = usePlayerStore();
+
+// 计算属性获取当前播放歌曲，添加默认值
+const currentSong = computed(() => playerStore.currentSong);
+const isPlaying = computed(() => playerStore.isPlaying);
+const progress = ref(0); // 进度条百分比，默认为0
+
+// 提供默认值的显示歌曲计算属性
+const displaySong = computed(() => {
+  if (!currentSong.value) {
+    // 当没有歌曲时，返回默认的"未知"信息
+    return {
+      id: '1',
+      title: '未知歌曲',
+      artist: '未知艺术家',
+      album: '未知专辑',
+      cover: 'https://picsum.photos/40/40?random=999', // 默认封面
+      duration: '00:00'
+    };
+  }
+  return currentSong.value;
+});
+
+// 添加播放控制方法
+const togglePlay = () => {
+  if (currentSong.value) {
+    playerStore.togglePlay();
+  }
+};
+
+const prevSong = () => {
+  if (currentSong.value) {
+    playerStore.prevSong();
+  }
+};
+
+const nextSong = () => {
+  if (currentSong.value) {
+    playerStore.nextSong();
+  }
+};
 </script>
 
 <style scoped>
+/* 原有样式保持不变 */
 .player-footer {
   display: flex;
   align-items: center;
@@ -63,12 +122,11 @@ const progress = ref(30); // 进度条百分比
   background-color: #fff;
   border-top: 1px solid #eee;
  
-  /* 原有样式保持不变 */
-  position: fixed;   /* 固定定位，脱离文档流 */
-  bottom: 0;         /* 距离屏幕底部 0px */
-  left: 0;           /* 距离屏幕左侧 0px */
-  right: 0;          /* 距离屏幕右侧 0px */
-  z-index: 999;      /* 提高层级，避免被其他元素覆盖 */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
 }
 
 

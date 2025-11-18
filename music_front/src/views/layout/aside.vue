@@ -25,6 +25,7 @@
       <el-menu-item index="/download" ><el-icon><Download /></el-icon>下载管理</el-menu-item>
       <el-menu-item index="/local" ><el-icon><Goods /></el-icon>本地音乐</el-menu-item>
       <el-menu-item index="/collect" ><el-icon><FolderAdd /></el-icon>我的收藏</el-menu-item>
+      <el-menu-item index="/disk" ><el-icon><UploadFilled /></el-icon>我的网盘音乐</el-menu-item>
       <el-menu-item @click="isExpanded = false">
         收起
       </el-menu-item>
@@ -33,19 +34,21 @@
     <el-menu-item disabled class="divider"></el-menu-item>
 
     <!-- 歌单区域 -->
-    <div class="playlist-title">创建的歌单 <span class="playlist-count">3</span> <el-icon class="add-icon">
-        <plus />
-      </el-icon></div>
-    <div class="playlist-title">收藏的歌单 <span class="playlist-count">5</span></div>
+    <!-- 创建歌单 -->
+     <CreatePlaylist />
+     <!-- 收藏的歌单 -->
+     <CollectPlaylist />
   </el-menu>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import {
-  House, Collection, UserFilled,
+  House, Collection, UserFilled, UploadFilled,
   Star, Clock, Expand, Plus, Headset, Download,Goods,FolderAdd
 } from '@element-plus/icons-vue';
+import CreatePlaylist from '@/views/createplaylist/index.vue';
+import CollectPlaylist from '@/views/collectplaylist/index.vue';
 
 const activeMenu = ref('/recommend');
 const isCollapse = ref(false);
