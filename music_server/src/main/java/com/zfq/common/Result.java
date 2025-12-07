@@ -49,13 +49,13 @@ public class Result {
         return result;
     }
 
-    public static Result warning(String  message, Object data) {
+    public static Result warning(String  message) {
         Result result = error(message);
         result.setType("warning");
         return result;
     }
 
-    public static Result fatal(String  message, Object data) {
+    public static Result fatal(String  message) {
         Result result = error(message);
         result.setCode("500");
         return result;
