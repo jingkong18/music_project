@@ -40,11 +40,7 @@ public class UserserviceImpl implements IUserService {
     private ISendCodeService sendCodeService;
 
     /**
-     * @param user
-     * @return com.zfq.common.Result
-     * @description: 注册
-     * @author zfq
-     * @date 2025/12/7
+     * 注册
      **/
     @Override
     public Result add(User user) {
@@ -90,7 +86,9 @@ public class UserserviceImpl implements IUserService {
             return Result.fatal(e.getMessage());
         }
     }
-
+    /**
+     * 登录
+     **/
     @Override
     public Result login(User user, HttpSession session) {
         if(user.getStatus() == 2L){
@@ -107,7 +105,9 @@ public class UserserviceImpl implements IUserService {
             return Result.warning("用户名或密码错误");
         }
     }
-
+    /**
+     * 邮箱登录
+     **/
     @Override
     public Result loginEmail(User user) {
         String email = user.getEmail();
@@ -122,6 +122,9 @@ public class UserserviceImpl implements IUserService {
         }
     }
 
+    /**
+     * 忘记密码
+     **/
     @Override
     public Result resertPasswd(UserDTO user) {
         User user1 = findByEmail(user.getEmail());
@@ -140,7 +143,9 @@ public class UserserviceImpl implements IUserService {
             return Result.error("修改失败");
         }
     }
-
+    /**
+     * 发送验证码
+     **/
     @Override
     public Result sendCode(String email) {
         User user = findByEmail(email);
@@ -153,7 +158,6 @@ public class UserserviceImpl implements IUserService {
 
         stringRedisTemplate.opsForValue().set(LOGIN_CODE_KEY, code,5, TimeUnit.MINUTES);
         return Result.success("验证码发送成功");
-
     }
 
     public boolean verityPasswd(String nickname, String passwd){

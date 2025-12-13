@@ -4,7 +4,8 @@ import com.zfq.common.Result;
 import com.zfq.model.dto.UserDTO;
 import com.zfq.model.po.User;
 import com.zfq.service.IUserService;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,39 +17,46 @@ import javax.servlet.http.HttpSession;
  * @Author zfq
  * @Date 2025/12/7
  */
+@Api(tags = "用户接口")
 @Slf4j
 @RestController
 @RequestMapping("/user")
-@Schema(description = "用户接口")
 public class UserController {
 
     @Resource
     private IUserService userService;
 
+    @ApiOperation(value = "新增用户", notes = "新增用户")
     @PostMapping("/add")
     public Result add(@RequestBody User  user){
         return userService.add(user);
     }
 
+    @ApiOperation(value = "登录", notes = "登录")
     @PostMapping("/login")
     public Result login(@RequestBody User user, HttpSession session){
         return userService.login(user, session);
     }
 
+    @ApiOperation(value = "邮箱登录", notes = "邮箱登录")
     @PostMapping("/email")
     public Result email(@RequestBody User user, HttpSession session){
         return userService.loginEmail(user);
     }
 
+    @ApiOperation(value = "重置密码", notes = "重置密码")
     @PostMapping("/resertPasswd")
     public Result resertPasswd(@RequestBody UserDTO user){
         return userService.resertPasswd(user);
     }
 
+    @ApiOperation(value = "发送验证码", notes = "发送验证码")
     @GetMapping("/sendCode")
     public Result sendCode(String email){
         return userService.sendCode(email);
     }
+
+
 
 
 
