@@ -14,9 +14,7 @@ import javax.servlet.http.HttpSession;
 public interface IUserService {
     Result add(User user);
 
-    Result login(User user, HttpSession session);
-
-    Result loginEmail(User user);
+    Result login(UserDTO user, HttpSession session);
 
     Result resertPasswd(UserDTO user);
 

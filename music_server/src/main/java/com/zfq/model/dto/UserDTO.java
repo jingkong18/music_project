@@ -14,4 +14,5 @@ import lombok.Data;
 @TableName("tb_user")
 public class UserDTO extends User {
     private String code;
+    private String account;
 }

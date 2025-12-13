@@ -34,14 +34,8 @@ public class UserController {
 
     @ApiOperation(value = "登录", notes = "登录")
     @PostMapping("/login")
-    public Result login(@RequestBody User user, HttpSession session){
+    public Result login(@RequestBody UserDTO user, HttpSession session){
         return userService.login(user, session);
-    }
-
-    @ApiOperation(value = "邮箱登录", notes = "邮箱登录")
-    @PostMapping("/email")
-    public Result email(@RequestBody User user, HttpSession session){
-        return userService.loginEmail(user);
     }
 
     @ApiOperation(value = "重置密码", notes = "重置密码")
