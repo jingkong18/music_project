@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -64,6 +65,8 @@ public class UserserviceImpl implements IUserService {
 
         user.setIcon("img/avator/user.jpg");
         user.setStatus(1L);
+        user.setCreateTime(LocalDateTime.now());
+        user.setUpdateTime(LocalDateTime.now());
 
         try{
             QueryWrapper<User> queryWrapper1 = new QueryWrapper<>();
@@ -96,6 +99,8 @@ public class UserserviceImpl implements IUserService {
         String account = user.getAccount();
         String password = user.getPassword();
 
+
+
         if (account == null || account.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             return Result.warning("账号或密码不能为空");
         }
@@ -117,8 +122,12 @@ public class UserserviceImpl implements IUserService {
             return Result.warning("用户被禁用");
         }
 
+
+
         if (BCryptUtil.matches(password, user1.getPassword())){
-            return Result.success("登录成功", user);
+            user1.setLastLoginTime(LocalDateTime.now());
+            userMapper.updateById(user1);
+            return Result.success("登录成功", user1);
         }else {
             return Result.warning("账号或密码错误");
         }
@@ -139,9 +148,10 @@ public class UserserviceImpl implements IUserService {
             return Result.warning("验证码错误");
         }
         String secretPasswd = DigestUtils.md5DigestAsHex((SALT + user.getPassword()).getBytes(StandardCharsets.UTF_8));
-        user.setPassword(secretPasswd);
+        user1.setPassword(secretPasswd);
 
-        if (userMapper.updateById(user)>0){
+        int i = userMapper.updateById(user1);
+        if (i > 0) {
             return Result.success("修改成功");
         }else {
             return Result.error("修改失败");

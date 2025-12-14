@@ -1,10 +1,9 @@
 package com.zfq.model.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zfq.db.annotation.Column;
-import com.zfq.db.annotation.Id;
-import com.zfq.db.annotation.Table;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -22,11 +21,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(value = "用户登录表", description = "用户登录表信息")
-@Table(name = "tb_user")
+@TableName("tb_user")
 public class User {
-    @Id(type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     @ApiModelProperty(name = "id", notes = "主键")
-    @Column(name = "id", jdbcType = JdbcType.BIGINT)
     private Long id;
 
     @ApiModelProperty(name = "phone", notes = "手机号")

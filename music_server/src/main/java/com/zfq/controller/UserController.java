@@ -46,7 +46,7 @@ public class UserController {
 
     @ApiOperation(value = "发送验证码", notes = "发送验证码")
     @GetMapping("/sendCode")
-    public Result sendCode(String email){
+    public Result sendCode(@RequestParam String email){
         return userService.sendCode(email);
     }
 

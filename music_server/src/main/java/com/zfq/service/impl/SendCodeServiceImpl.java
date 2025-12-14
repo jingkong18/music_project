@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,24 +26,17 @@ public class SendCodeServiceImpl implements ISendCodeService {
     @Resource
     private MailSender mailSender;
 
+    @Async
     @Override
     public void sendCode(String code, String reciveAddress) {
-        MimeMessagePreparator preparator = new MimeMessagePreparator() {
-            @Override
-            public void prepare(MimeMessage mimeMessage) throws Exception {
-                mimeMessage.setRecipient(MimeMessage.RecipientType.TO,
-                        new InternetAddress(reciveAddress));
-                mimeMessage.setFrom(new InternetAddress(sendAddress));
-                mimeMessage.setText("您好！\n" +
-                        "\n" +
-                        "本次操作的验证码为" + code + "。\n" +
-                        "\n" +
-                        "验证码有效5分钟，请在有效期内完成验证。\n" +
-                        "如非本人操作，请忽略此邮件，切勿泄露验证码给他人。\n" +
-                        "\n" +
-                        "此致");
-            }
-        };
-        mailSender.send((SimpleMailMessage) preparator);
+        // 1. 构建简单邮件消息
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(sendAddress); // 使用注入的发件人邮箱
+        message.setTo(reciveAddress); // 收件人邮箱
+        message.setSubject("【音乐】邮箱验证码"); // 邮件主题
+        message.setText("你的验证码是：" + code + "，有效期5分钟，请妥善保管！"); // 文本内容
+
+        // 2. 发送邮件
+        mailSender.send(message);
     }
 }

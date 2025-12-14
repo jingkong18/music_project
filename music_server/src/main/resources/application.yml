@@ -15,16 +15,21 @@ spring:
   mail:
     host: smtp.qq.com
     port: 465
-    username: 236394090@qq.com
-    password: tmwsrifoyuclecea
+    username: 2360589290@qq.com
+    password: ccbwgagtjcjmdiag
     properties:
       mail:
           smtp:
-              auth: true
-              socketFactory:
-                class: javax.net.ssl.SSLSocketFactory
-              starttls:
-                enable: true
+            pool:
+              enable: true
+              connection: 5000
+              timeout: 5000
+              writetimeout: 5000
+            auth: true
+            socketFactory:
+              class: javax.net.ssl.SSLSocketFactory
+            starttls:
+              enable: true
   redis:
     host: localhost
     port: 6379
