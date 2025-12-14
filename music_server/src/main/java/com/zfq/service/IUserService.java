@@ -14,9 +14,13 @@ import javax.servlet.http.HttpSession;
 public interface IUserService {
     Result add(User user);
 
-    Result login(UserDTO user, HttpSession session);
+    Result login(UserDTO user);
 
     Result resertPasswd(UserDTO user);
 
     Result sendCode(String email);
+    
+    User getById(Long id);
+    
+    void logout(String token);
 }

@@ -1,5 +1,6 @@
 package com.zfq.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zfq.common.Result;
 import com.zfq.mapper.IUserMapper;
@@ -9,6 +10,7 @@ import com.zfq.service.ISendCodeService;
 import com.zfq.service.IUserService;
 import com.zfq.utils.BCryptUtil;
 import com.zfq.utils.RandomUtils;
+import com.zfq.utils.TokenManager;
 import jodd.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -41,6 +43,8 @@ public class UserserviceImpl implements IUserService {
     private StringRedisTemplate stringRedisTemplate;
     @Resource
     private ISendCodeService sendCodeService;
+    @Resource
+    private TokenManager tokenManager;
 
     /**
      * 注册
@@ -94,12 +98,10 @@ public class UserserviceImpl implements IUserService {
      * 登录
      **/
     @Override
-    public Result login(UserDTO user, HttpSession session) {
+    public Result login(UserDTO user) {
 
         String account = user.getAccount();
         String password = user.getPassword();
-
-
 
         if (account == null || account.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             return Result.warning("账号或密码不能为空");
@@ -127,7 +129,14 @@ public class UserserviceImpl implements IUserService {
         if (BCryptUtil.matches(password, user1.getPassword())){
             user1.setLastLoginTime(LocalDateTime.now());
             userMapper.updateById(user1);
-            return Result.success("登录成功", user1);
+
+            BeanUtil.copyProperties(user1, user);
+
+            // 生成token并返回
+            String token = tokenManager.generateToken(user.getId().toString());
+            user.setToken(token);
+
+            return Result.success("登录成功", user);
         }else {
             return Result.warning("账号或密码错误");
         }
@@ -178,6 +187,16 @@ public class UserserviceImpl implements IUserService {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("email", email);
         return userMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public User getById(Long id) {
+        return userMapper.selectById(id);
+    }
+
+    @Override
+    public void logout(String token) {
+        tokenManager.removeToken(token);
     }
 
 }

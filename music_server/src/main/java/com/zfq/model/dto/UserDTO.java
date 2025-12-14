@@ -15,4 +15,5 @@ import lombok.Data;
 public class UserDTO extends User {
     private String code;
     private String account;
+    private String token;
 }

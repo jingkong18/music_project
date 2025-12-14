@@ -14,50 +14,60 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Result {
+public class Result<T> {
 
     private String code;
 
     private String message;
 
-    private Object data;
+    private T data;
 
     private Boolean success;
 
     private String type;
 
-    public static Result success(String  message) {
-        Result result = new Result();
+    public static <T> Result<T> success(String message) {
+        return success(message, null);
+    }
+
+    public static <T> Result<T> success(String message, T data) {
+        Result<T> result = new Result<>();
         result.setCode("200");
         result.setMessage(message);
+        result.setData(data);
         result.setSuccess(true);
         result.setType("success");
+        return result;
+    }
+
+    // ==================== 静态工厂方法：失败场景 ====================
+    public static <T> Result<T> error(String message) {
+        Result<T> result = new Result<>();
+        result.setCode("400"); // 错误默认业务码（可根据需求调整）
+        result.setMessage(message);
         result.setData(null);
-        return result;
-    }
-
-    public static Result success(String  message, Object data) {
-        Result result = success(message);
-        result.setData(data);
-        return result;
-    }
-
-    public static Result error(String  message) {
-        Result result = success(message);
         result.setSuccess(false);
         result.setType("error");
         return result;
     }
 
-    public static Result warning(String  message) {
-        Result result = error(message);
+    public static <T> Result<T> warning(String message) {
+        Result<T> result = new Result<>();
+        result.setCode("300"); // 警告默认业务码（可根据需求调整）
+        result.setMessage(message);
+        result.setData(null);
+        result.setSuccess(false); // 警告也视为非成功场景（可根据需求调整）
         result.setType("warning");
         return result;
     }
 
-    public static Result fatal(String  message) {
-        Result result = error(message);
-        result.setCode("500");
+    public static <T> Result<T> fatal(String message) {
+        Result<T> result = new Result<>();
+        result.setCode("500"); // 致命错误对应500码
+        result.setMessage(message);
+        result.setData(null);
+        result.setSuccess(false);
+        result.setType("fatal"); // 区分致命错误的type
         return result;
     }
 

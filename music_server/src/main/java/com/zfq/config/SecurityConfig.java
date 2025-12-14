@@ -1,16 +1,21 @@
 package com.zfq.config;
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
+import com.zfq.utils.TokenAuthenticationFilter;
+import com.zfq.utils.TokenManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 
 /**
@@ -22,6 +27,15 @@ import java.util.Arrays;
 @EnableWebSecurity
 @EnableKnife4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Resource
+    private TokenManager tokenManager;
+
+    @Resource
+    private UserDetailsService userDetailsService;
+
+    @Resource
+    private TokenAuthenticationFilter tokenAuthenticationFilter;
 
 
     // 第一步：配置全局CORS过滤器（核心跨域规则）
@@ -58,7 +72,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new CorsFilter(source);
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -74,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/doc.html" // Knife4j的UI入口（如果用了Knife4j，需要加这个）
             ).permitAll()
             // 放行用户相关接口（修复拼写错误：loogin → login）
-            .antMatchers("/user/add","/user/login","/user/resertPasswd").permitAll()
+            .antMatchers("/user/add","/user/login","/user/resetPasswd").permitAll()
             // 显式放行OPTIONS预检请求（兜底，即使anyRequest().permitAll()也建议加）
             .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             // 开发环境放行所有请求（生产环境建议改为anyRequest().authenticated()）
@@ -84,5 +97,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf().disable()
             // 关闭默认的表单登录
             .formLogin().disable();
+
+        http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
