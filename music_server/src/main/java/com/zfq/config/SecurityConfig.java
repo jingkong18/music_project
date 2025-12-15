@@ -38,6 +38,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private TokenAuthenticationFilter tokenAuthenticationFilter;
 
 
+    // ********** 1. 提取白名单常量，统一管理 **********
+    public static final String[] WHITE_LIST = {
+        // Swagger/Knife4j路径
+        "/swagger-ui/**",
+        "/v3/api-docs/**",
+        "/swagger-resources/**",
+        "/webjars/**",
+        "/doc.html",
+        // 用户相关路径
+        "/user/add",
+        "/user/login",
+        "/user/resetPasswd"
+    };
+
     // 第一步：配置全局CORS过滤器（核心跨域规则）
     @Bean
     public CorsFilter corsFilter() {
@@ -80,18 +94,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             // 放行Swagger 3.x/ Knife4j相关路径
             .antMatchers(
-                "/swagger-ui/**",
-                "/v3/api-docs/**",
-                "/swagger-resources/**",
-                "/webjars/**",
-                "/doc.html" // Knife4j的UI入口（如果用了Knife4j，需要加这个）
+                WHITE_LIST
             ).permitAll()
-            // 放行用户相关接口（修复拼写错误：loogin → login）
-            .antMatchers("/user/add","/user/login","/user/resetPasswd").permitAll()
-            // 显式放行OPTIONS预检请求（兜底，即使anyRequest().permitAll()也建议加）
-            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             // 开发环境放行所有请求（生产环境建议改为anyRequest().authenticated()）
-            .anyRequest().permitAll()
+            .anyRequest().authenticated()
             .and()
             // 关闭CSRF（开发环境简化，生产环境按需开启）
             .csrf().disable()
